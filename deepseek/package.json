@@ -1,9 +1,9 @@
 {
-  "name": "@clawdbot/deepseek-auth",
+  "name": "@openclaw/deepseek-auth",
   "version": "1.0.0",
-  "description": "DeepSeek provider plugin for Clawdbot",
+  "description": "DeepSeek provider plugin for OpenClaw",
   "type": "module",
-  "clawdbot": {
+  "openclaw": {
     "extensions": [
       "./index.ts"
     ]

@@ -1,7 +1,7 @@
 {
-  "name": "@openclaw/nvidia-auth",
+  "name": "@openclaw/zenmux-gen-auth",
   "version": "1.0.0",
-  "description": "NVIDIA NIM provider plugin for OpenClaw",
+  "description": "Zenmux Gen provider plugin for OpenClaw",
   "type": "module",
   "openclaw": {
     "extensions": [

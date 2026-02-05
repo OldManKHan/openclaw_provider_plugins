@@ -1,11 +1,11 @@
 import { emptyPluginConfigSchema } from "openclaw/plugin-sdk";
 
-const PROVIDER_ID = "deepseek";
-const PROVIDER_LABEL = "DeepSeek (深度求索)";
-const DEFAULT_MODEL = "deepseek/deepseek-chat";
-const DEFAULT_BASE_URL = "https://api.deepseek.com/v1";
-const DEFAULT_CONTEXT_WINDOW = 65536;
-const DEFAULT_MAX_TOKENS = 8192;
+const PROVIDER_ID = "zenmux";
+const PROVIDER_LABEL = "Zenmux";
+const DEFAULT_MODEL = "zenmux/anthropic/claude-opus-4.5";
+const DEFAULT_BASE_URL = "https://zenmux.ai/api/v1";
+const DEFAULT_CONTEXT_WINDOW = 200000;
+const DEFAULT_MAX_TOKENS = 32000;
 
 function buildModelDefinition(params: {
   id: string;
@@ -27,37 +27,36 @@ function buildModelDefinition(params: {
 }
 
 const MODELS = [
-  // DeepSeek V3 系列 (Chat)
+  // Anthropic Claude Opus 4.5
   buildModelDefinition({
-    id: "deepseek-chat",
-    name: "DeepSeek V3",
-    input: ["text"],
-    contextWindow: 65536,
-    maxTokens: 8192,
+    id: "anthropic/claude-opus-4.5",
+    name: "Claude Opus 4.5",
+    input: ["text", "image"],
+    contextWindow: 200000,
+    maxTokens: 32000,
   }),
-  // DeepSeek R1 系列 (Reasoning)
+  // OpenAI GPT-5.2 Pro
   buildModelDefinition({
-    id: "deepseek-reasoner",
-    name: "DeepSeek R1",
-    input: ["text"],
-    contextWindow: 65536,
-    maxTokens: 8192,
-    reasoning: true,
+    id: "openai/gpt-5.2-pro",
+    name: "GPT-5.2 Pro",
+    input: ["text", "image"],
+    contextWindow: 128000,
+    maxTokens: 16384,
   }),
 ];
 
-const deepseekPlugin = {
-  id: "deepseek-auth",
-  name: "DeepSeek (深度求索)",
-  description: "API key authentication for DeepSeek models",
+const zenmuxPlugin = {
+  id: "zenmux-auth",
+  name: "Zenmux",
+  description: "API key authentication for Zenmux models",
   configSchema: emptyPluginConfigSchema(),
   register(api) {
     api.registerProvider({
       id: PROVIDER_ID,
       label: PROVIDER_LABEL,
-      docsPath: "/providers/deepseek",
-      aliases: ["ds"],
-      envVars: ["DEEPSEEK_API_KEY"],
+      docsPath: "/providers/zenmux",
+      aliases: ["zm"],
+      envVars: ["ZENMUX_API_KEY"],
       models: {
         baseUrl: DEFAULT_BASE_URL,
         api: "openai-completions",
@@ -66,12 +65,12 @@ const deepseekPlugin = {
       auth: [
         {
           id: "api-key",
-          label: "DeepSeek API Key",
-          hint: "Enter your DeepSeek API key",
+          label: "Zenmux API Key",
+          hint: "Enter your Zenmux API key",
           kind: "api_key",
           run: async (ctx) => {
             const key = await ctx.prompter.text({
-              message: "Enter your DeepSeek API key",
+              message: "Enter your Zenmux API key",
               validate: (value) => {
                 if (!value?.trim()) return "API key is required";
                 return undefined;
@@ -105,17 +104,17 @@ const deepseekPlugin = {
                 agents: {
                   defaults: {
                     models: {
-                      "deepseek/deepseek-chat": { alias: "DeepSeek V3" },
-                      "deepseek/deepseek-reasoner": { alias: "DeepSeek R1" },
+                      "zenmux/anthropic/claude-opus-4.5": { alias: "Claude Opus 4.5" },
+                      "zenmux/openai/gpt-5.2-pro": { alias: "GPT-5.2 Pro" },
                     },
                   },
                 },
               },
               defaultModel: DEFAULT_MODEL,
               notes: [
-                "DeepSeek API key configured successfully.",
+                "Zenmux API key configured successfully.",
                 `Default model set to ${DEFAULT_MODEL}.`,
-                "Get your API key at: https://platform.deepseek.com/",
+                "Get your API key at: https://zenmux.ai/",
               ],
             };
           },
@@ -125,4 +124,4 @@ const deepseekPlugin = {
   },
 };
 
-export default deepseekPlugin;
+export default zenmuxPlugin;
