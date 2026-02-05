@@ -1,9 +1,9 @@
 {
-  "name": "@clawdbot/glm-auth",
+  "name": "@openclaw/glm-auth",
   "version": "1.0.0",
-  "description": "智谱 GLM provider plugin for Clawdbot",
+  "description": "智谱 GLM provider plugin for OpenClaw",
   "type": "module",
-  "clawdbot": {
+  "openclaw": {
     "extensions": [
       "./index.ts"
     ]

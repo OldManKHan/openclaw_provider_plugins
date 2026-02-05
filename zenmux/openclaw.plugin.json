@@ -1,0 +1,9 @@
+{
+  "id": "zenmux-auth",
+  "providers": ["zenmux"],
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {}
+  }
+}
