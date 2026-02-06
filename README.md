@@ -9,6 +9,7 @@
 | DeepSeek | `deepseek` | deepseek-chat (V3), deepseek-reasoner (R1) |
 | GLM | `glm` | glm-4.7 |
 | Kimi | `kimi` | kimi-k2.5, kimi-k2-thinking, moonshot-v1 系列 |
+| Aliyun Bailian | `aliyun-bailian` | qwen3-max, kimi-k2.5, glm-4.7, MiniMax-M2.1, deepseek-v3.2 |
 | Zenmux | `zenmux` | anthropic/claude-opus-4.6, anthropic/claude-opus-4.5, openai/gpt-5.2-pro |
 
 ## 可用技能 (Skills)
@@ -16,6 +17,7 @@
 | 技能 | 功能 | 依赖 |
 |------|------|------|
 | zenmux-image-gen-skill | 使用 Gemini 图像模型生成/编辑图片 | uv, ZENMUX_API_KEY |
+| bailian-multimodal-skills | 使用阿里云百炼多模态模型 (生图, ASR, TTS) | uv, DASHSCOPE_API_KEY |
 
 ## 安装插件 (Plugins)
 
@@ -37,6 +39,11 @@ cd kimi
 openclaw plugins install ./
 openclaw models auth login --provider kimi
 
+# 安装 aliyun-bailian
+cd aliyun-bailian
+openclaw plugins install ./
+openclaw models auth login --provider aliyun-bailian
+
 # 安装 zenmux
 cd zenmux
 openclaw plugins install ./
@@ -54,19 +61,26 @@ openclaw gateway restart
 # 安装 zenmux-image-gen-skill
 cp -r zenmux-image-gen-skill/ ~/.openclaw/skills/
 
+# 安装 bailian-multimodal-skills
+cp -r bailian-multimodal-skills/ ~/.openclaw/skills/
+
 # 安装 uv (如果未安装)
 # macOS
 brew install uv
 # 或者
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# 配置 API Key
+# 配置 API Key (Zenmux)
 export ZENMUX_API_KEY="your-api-key"
 # 或者
 openclaw config set skills.zenmux-image-gen-skill.apiKey "your-api-key"
 
+# 配置 API Key (Bailian)
+export DASHSCOPE_API_KEY="your-api-key"
+
 # 验证安装
 openclaw skills info zenmux-image-gen-skill
+openclaw skills info bailian-multimodal-skills
 ```
 
 
@@ -138,10 +152,32 @@ uv run ~/.openclaw/skills/zenmux-image-gen-skill/scripts/generate_image.py \
   -i img1.png -i img2.png -i img3.png
 ```
 
+### bailian-multimodal-skills
+
+1. 生图 (z-image-turbo, wan2.6-t2i):
+
+```bash
+uv run ~/.openclaw/skills/bailian-multimodal-skills/scripts/run_multimodal.py \
+  --mode image --model z-image-turbo --prompt "future city" --output "city.png"
+```
+
+2. ASR (qwen3-asr-flash):
+
+```bash
+uv run ~/.openclaw/skills/bailian-multimodal-skills/scripts/run_multimodal.py \
+  --mode asr --model qwen3-asr-flash --input-audio "https://example.com/audio.mp3"
+```
+
+3. TTS (qwen3-tts-flash):
+
+```bash
+uv run ~/.openclaw/skills/bailian-multimodal-skills/scripts/run_multimodal.py \
+  --mode tts --model qwen3-tts-flash --text "Hello OpenClaw" --output "hello.wav"
+```
+
 可用模型：
-- `google/gemini-3-pro-image-preview` (默认，最高质量)
-- `google/gemini-3-pro-image-preview-free` (免费版)
-- `google/gemini-2.5-flash-image` (更快)
-- `google/gemini-2.5-flash-image-free` (免费版，更快)
+- **Image**: `z-image-turbo`, `wan2.6-t2i`
+- **ASR**: `qwen3-asr-flash`
+- **TTS**: `qwen3-tts-flash`
 
 **注意**: 在 Telegram/Discord 等聊天频道发送生成的图片时，需要使用 `message` 工具的 `filePath` 参数，而不是直接输出 `MEDIA:` 路径文本。

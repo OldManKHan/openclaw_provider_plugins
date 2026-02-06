@@ -1,0 +1,11 @@
+{
+    "id": "aliyun-bailian-auth",
+    "providers": [
+        "aliyun-bailian"
+    ],
+    "configSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {}
+    }
+}

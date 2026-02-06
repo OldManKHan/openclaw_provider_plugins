@@ -1,0 +1,11 @@
+{
+  "name": "@openclaw/aliyun-bailian-auth",
+  "version": "1.0.0",
+  "description": "Aliyun Bailian provider plugin for OpenClaw",
+  "type": "module",
+  "openclaw": {
+    "extensions": [
+      "./index.ts"
+    ]
+  }
+}
