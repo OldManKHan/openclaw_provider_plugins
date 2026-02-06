@@ -52,7 +52,7 @@ openclaw gateway restart
 
 ```bash
 # 安装 zenmux-image-gen-skill
-cp -r zenmux-image-gen-skill ~/.openclaw/skills/
+cp -r zenmux-image-gen-skill/ ~/.openclaw/skills/
 
 # 安装 uv (如果未安装)
 # macOS
