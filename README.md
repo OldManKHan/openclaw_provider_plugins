@@ -9,7 +9,7 @@
 | DeepSeek | `deepseek` | deepseek-chat (V3), deepseek-reasoner (R1) |
 | GLM | `glm` | glm-4.7 |
 | Kimi | `kimi` | kimi-k2.5, kimi-k2-thinking, moonshot-v1 系列 |
-| Zenmux | `zenmux` | anthropic/claude-opus-4.5, openai/gpt-5.2-pro |
+| Zenmux | `zenmux` | anthropic/claude-opus-4.6, anthropic/claude-opus-4.5, openai/gpt-5.2-pro |
 
 ## 可用技能 (Skills)
 
