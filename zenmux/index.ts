@@ -27,6 +27,14 @@ function buildModelDefinition(params: {
 }
 
 const MODELS = [
+  // Anthropic Claude Opus 4.6
+  buildModelDefinition({
+    id: "anthropic/claude-opus-4.6",
+    name: "Claude Opus 4.6",
+    input: ["text", "image"],
+    contextWindow: 200000,
+    maxTokens: 32000,
+  }),
   // Anthropic Claude Opus 4.5
   buildModelDefinition({
     id: "anthropic/claude-opus-4.5",
@@ -104,6 +112,7 @@ const zenmuxPlugin = {
                 agents: {
                   defaults: {
                     models: {
+                      "zenmux/anthropic/claude-opus-4.6": { alias: "Claude Opus 4.6" },
                       "zenmux/anthropic/claude-opus-4.5": { alias: "Claude Opus 4.5" },
                       "zenmux/openai/gpt-5.2-pro": { alias: "GPT-5.2 Pro" },
                     },
