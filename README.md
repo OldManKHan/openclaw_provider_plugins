@@ -19,28 +19,30 @@
 
 ## 安装插件 (Plugins)
 
-将插件目录复制到 OpenClaw 的 plugins 目录下：（可以根据需求选装或者都安装）
+安装插件分为两步：1) 安装插件 2) 配置 API 认证。可以根据需求选装或者都安装。
 
 ```bash
-# 安装deepseek
+# 安装 deepseek
 cd deepseek
 openclaw plugins install ./
+openclaw models auth login --provider deepseek
 
-# 安装glm
+# 安装 glm
 cd glm
 openclaw plugins install ./
+openclaw models auth login --provider glm
 
-# 安装kimi
+# 安装 kimi
 cd kimi
 openclaw plugins install ./
+openclaw models auth login --provider kimi
 
-# 安装zenmux
+# 安装 zenmux
 cd zenmux
 openclaw plugins install ./
+openclaw models auth login --provider zenmux
 
-# 安装完成重启一次
-
-# 重启当前运行的 gateway
+# 安装完成后重启 gateway 使配置生效
 openclaw gateway restart
 ```
 
@@ -65,32 +67,6 @@ openclaw config set skills.zenmux-image-gen-skill.apiKey "your-api-key"
 
 # 验证安装
 openclaw skills info zenmux-image-gen-skill
-```
-
-
-## 配置 API
-
-1. 运行 OpenClaw 的认证配置命令，按提示输入 API Key：
-
-```bash
-openclaw models auth login --provider kimi
-
-openclaw models auth login --provider glm
-
-openclaw models auth login --provider deepseek
-
-openclaw models auth login --provider zenmux
-```
-
-
-## 重启 Gateway
-
-配置完成后，需要重启 OpenClaw Gateway 使配置生效：
-
-```bash
-# 重启当前运行的 gateway
-openclaw gateway restart
-
 ```
 
 
