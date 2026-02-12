@@ -1,7 +1,7 @@
 import { emptyPluginConfigSchema } from "openclaw/plugin-sdk";
 
 const PROVIDER_ID = "streamlake";
-const PROVIDER_LABEL = "StreamLake (万清)";
+const PROVIDER_LABEL = "StreamLake (万擎)";
 const DEFAULT_MODEL = "streamlake/glm-5";
 const DEFAULT_BASE_URL = "https://wanqing.streamlakeapi.com/api/gateway/v1/endpoints";
 const DEFAULT_CONTEXT_WINDOW = 200000;
@@ -45,7 +45,7 @@ const MODELS = [
 
 const streamlakePlugin = {
     id: "streamlake-auth",
-    name: "StreamLake (万清)",
+    name: "StreamLake (万擎)",
     description: "API key authentication for StreamLake (WanQing) models",
     configSchema: emptyPluginConfigSchema(),
     register(api) {
