@@ -1,0 +1,11 @@
+{
+    "name": "@openclaw/streamlake-auth",
+    "version": "1.0.0",
+    "description": "StreamLake (WanQing) provider plugin for OpenClaw",
+    "type": "module",
+    "openclaw": {
+        "extensions": [
+            "./index.ts"
+        ]
+    }
+}

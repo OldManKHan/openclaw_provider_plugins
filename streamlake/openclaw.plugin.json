@@ -1,0 +1,11 @@
+{
+    "id": "streamlake-auth",
+    "providers": [
+        "streamlake"
+    ],
+    "configSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {}
+    }
+}
