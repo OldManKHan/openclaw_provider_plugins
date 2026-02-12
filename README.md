@@ -10,6 +10,7 @@
 | GLM | `glm` | glm-4.7 |
 | Kimi | `kimi` | kimi-k2.5, kimi-k2-thinking, moonshot-v1 系列 |
 | Aliyun Bailian | `aliyun-bailian` | qwen3-max, kimi-k2.5, glm-4.7, MiniMax-M2.1, deepseek-v3.2 |
+| StreamLake (万清) | `streamlake` | glm-5, minimax-m2.5 |
 | Zenmux | `zenmux` | anthropic/claude-opus-4.6, anthropic/claude-opus-4.5, openai/gpt-5.2-pro |
 
 ## 可用技能 (Skills)
@@ -48,6 +49,11 @@ openclaw models auth login --provider aliyun-bailian
 cd zenmux
 openclaw plugins install ./
 openclaw models auth login --provider zenmux
+
+# 安装 streamlake (万清)
+cd streamlake
+openclaw plugins install ./
+openclaw models auth login --provider streamlake --env WQ_API_KEY
 
 # 安装完成后重启 gateway 使配置生效
 openclaw gateway restart
