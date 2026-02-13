@@ -1,0 +1,9 @@
+{
+  "id": "custom-auth",
+  "providers": ["custom"],
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {}
+  }
+}

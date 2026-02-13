@@ -1,0 +1,9 @@
+{
+  "id": "aigocode-openai-auth",
+  "providers": ["aigocode_openai"],
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {}
+  }
+}

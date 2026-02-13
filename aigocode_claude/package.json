@@ -1,0 +1,11 @@
+{
+  "name": "@openclaw/aigocode-claude-auth",
+  "version": "1.0.0",
+  "description": "AIGOCode Claude provider plugin for openclaw",
+  "type": "module",
+  "openclaw": {
+    "extensions": [
+      "./index.ts"
+    ]
+  }
+}

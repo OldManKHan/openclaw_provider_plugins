@@ -1,0 +1,11 @@
+{
+  "name": "@openclaw/aigocode-openai-auth",
+  "version": "1.0.0",
+  "description": "AIGOCode OpenAI provider plugin for openclaw",
+  "type": "module",
+  "openclaw": {
+    "extensions": [
+      "./index.ts"
+    ]
+  }
+}

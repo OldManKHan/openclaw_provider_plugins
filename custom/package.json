@@ -1,0 +1,11 @@
+{
+  "name": "@openclaw/custom-auth",
+  "version": "1.0.0",
+  "description": "Custom OpenAI-compatible provider plugin for openclaw",
+  "type": "module",
+  "openclaw": {
+    "extensions": [
+      "./index.ts"
+    ]
+  }
+}

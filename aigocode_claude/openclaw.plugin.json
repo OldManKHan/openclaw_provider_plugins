@@ -1,0 +1,9 @@
+{
+  "id": "aigocode-claude-auth",
+  "providers": ["aigocode_claude"],
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {}
+  }
+}
