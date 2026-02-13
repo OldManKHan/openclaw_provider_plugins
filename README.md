@@ -9,6 +9,9 @@
 | DeepSeek | `deepseek` | deepseek-chat (V3), deepseek-reasoner (R1) |
 | GLM | `glm` | glm-4.7 |
 | Kimi | `kimi` | kimi-k2.5, kimi-k2-thinking, moonshot-v1 系列 |
+| AIGOCode OpenAI | `aigocode_openai` | gpt-5.3-codex |
+| AIGOCode Claude | `aigocode_claude` | claude-opus-4-6, claude-opus-4-5, claude-sonnet-4-5 |
+| Custom (OpenAI 兼容) | `custom` | 自定义 OpenAI 兼容模型 |
 | Aliyun Bailian | `aliyun-bailian` | qwen3-max, kimi-k2.5, glm-4.7, MiniMax-M2.1, deepseek-v3.2 |
 | StreamLake (万擎) | `streamlake` | glm-5, minimax-m2.5 |
 | Zenmux | `zenmux` | anthropic/claude-opus-4.6, anthropic/claude-opus-4.5, openai/gpt-5.2-pro |
@@ -39,6 +42,21 @@ openclaw models auth login --provider glm
 cd kimi
 openclaw plugins install ./
 openclaw models auth login --provider kimi
+
+# 安装 aigocode_openai
+cd aigocode_openai
+openclaw plugins install ./
+openclaw models auth login --provider aigocode_openai
+
+# 安装 aigocode_claude
+cd aigocode_claude
+openclaw plugins install ./
+openclaw models auth login --provider aigocode_claude
+
+# 安装 custom
+cd custom
+openclaw plugins install ./
+openclaw models auth login --provider custom
 
 # 安装 aliyun-bailian
 cd aliyun-bailian
