@@ -1,0 +1,10 @@
+{
+  "id": "prompt-log",
+  "name": "Prompt Log",
+  "description": "Persist llm_input prompt context into the OpenClaw logs directory.",
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {}
+  }
+}

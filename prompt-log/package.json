@@ -1,0 +1,12 @@
+{
+  "name": "@openclaw/prompt-log",
+  "version": "2026.3.2",
+  "private": true,
+  "description": "OpenClaw prompt logging plugin",
+  "type": "module",
+  "openclaw": {
+    "extensions": [
+      "./index.ts"
+    ]
+  }
+}

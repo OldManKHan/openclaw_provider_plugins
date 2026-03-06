@@ -1,0 +1,513 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Prompt Log Viewer</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f6f2ec;
+        --panel: #fffdf9;
+        --ink: #1c1a17;
+        --muted: #6b635b;
+        --accent: #0b6b62;
+        --accent-2: #c3a27c;
+        --border: #e2d7c9;
+        --shadow: 0 10px 24px rgba(28, 26, 23, 0.08);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family:
+          "IBM Plex Sans",
+          "Segoe UI",
+          "Helvetica Neue",
+          sans-serif;
+        color: var(--ink);
+        background:
+          radial-gradient(1200px 400px at 15% -10%, #fff4e2 0%, transparent 60%),
+          radial-gradient(900px 500px at 90% -20%, #e6f4f1 0%, transparent 60%),
+          var(--bg);
+      }
+      header {
+        padding: 24px 24px 8px 24px;
+      }
+      h1 {
+        margin: 0 0 8px 0;
+        font-size: 28px;
+        letter-spacing: 0.2px;
+      }
+      .subtitle {
+        color: var(--muted);
+        font-size: 14px;
+      }
+      .wrap {
+        display: grid;
+        gap: 16px;
+        padding: 16px 24px 32px 24px;
+        grid-template-columns: 320px 1fr;
+      }
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 16px;
+        box-shadow: var(--shadow);
+      }
+      .panel h2 {
+        margin: 0 0 12px 0;
+        font-size: 16px;
+      }
+      .file-drop {
+        border: 2px dashed var(--border);
+        border-radius: 12px;
+        padding: 16px;
+        text-align: center;
+        color: var(--muted);
+        transition: border-color 120ms ease, color 120ms ease, background 120ms ease;
+      }
+      .file-drop.drag {
+        border-color: var(--accent);
+        color: var(--ink);
+        background: #f2faf8;
+      }
+      .row {
+        display: grid;
+        gap: 8px;
+        margin-bottom: 12px;
+      }
+      .row label {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      input[type="text"],
+      input[type="date"] {
+        width: 100%;
+        padding: 8px 10px;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        font-size: 14px;
+        background: #fff;
+      }
+      input[type="file"] {
+        width: 100%;
+      }
+      button {
+        border: 1px solid var(--border);
+        background: var(--accent);
+        color: #fff;
+        padding: 8px 12px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 13px;
+      }
+      button.secondary {
+        background: #fff;
+        color: var(--ink);
+      }
+      .stats {
+        font-size: 12px;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+      .records {
+        display: grid;
+        gap: 12px;
+      }
+      details.record {
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 10px 12px;
+        background: #fff;
+      }
+      details.record summary {
+        cursor: pointer;
+        list-style: none;
+        display: grid;
+        grid-template-columns: 160px 1fr 120px;
+        gap: 12px;
+        align-items: center;
+      }
+      details.record summary::-webkit-details-marker {
+        display: none;
+      }
+      .tag {
+        display: inline-block;
+        padding: 2px 6px;
+        font-size: 11px;
+        border-radius: 999px;
+        background: #f2eee7;
+        color: var(--muted);
+        margin-right: 6px;
+      }
+      .meta-grid {
+        display: grid;
+        gap: 8px;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        margin: 10px 0 8px 0;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      pre {
+        margin: 8px 0;
+        padding: 10px;
+        background: #f7f3ed;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        font-family:
+          "IBM Plex Mono",
+          "SFMono-Regular",
+          "Menlo",
+          monospace;
+        font-size: 12px;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+      .section-title {
+        font-size: 12px;
+        font-weight: 600;
+        margin-top: 10px;
+      }
+      .empty {
+        color: var(--muted);
+        text-align: center;
+        padding: 24px;
+      }
+      @media (max-width: 980px) {
+        .wrap {
+          grid-template-columns: 1fr;
+        }
+        details.record summary {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Prompt Log Viewer</h1>
+      <div class="subtitle">
+        Load OpenClaw prompt logs from <code>logs/prompt/YYYY-MM-DD.jsonl</code> and browse entries.
+      </div>
+    </header>
+
+    <div class="wrap">
+      <section class="panel">
+        <h2>Load</h2>
+        <div class="row">
+          <input id="fileInput" type="file" accept=".jsonl" multiple />
+        </div>
+        <div id="dropZone" class="file-drop">Drop JSONL files here</div>
+
+        <h2 style="margin-top: 16px">Filters</h2>
+        <div class="row">
+          <label for="searchInput">Search</label>
+          <input id="searchInput" type="text" placeholder="prompt, system, session, model..." />
+        </div>
+        <div class="row">
+          <label for="providerInput">Provider</label>
+          <input id="providerInput" type="text" placeholder="openai, anthropic, ..." />
+        </div>
+        <div class="row">
+          <label for="modelInput">Model</label>
+          <input id="modelInput" type="text" placeholder="gpt-5, claude-..." />
+        </div>
+        <div class="row">
+          <label for="sessionInput">Session ID</label>
+          <input id="sessionInput" type="text" />
+        </div>
+        <div class="row">
+          <label for="agentInput">Agent ID</label>
+          <input id="agentInput" type="text" />
+        </div>
+        <div class="row">
+          <label>Date range</label>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px">
+            <input id="dateFrom" type="date" />
+            <input id="dateTo" type="date" />
+          </div>
+        </div>
+        <div style="display: flex; gap: 8px">
+          <button id="clearFilters" class="secondary">Clear filters</button>
+          <button id="clearData" class="secondary">Clear data</button>
+        </div>
+
+        <h2 style="margin-top: 16px">Stats</h2>
+        <div id="stats" class="stats">No data loaded.</div>
+      </section>
+
+      <section class="panel">
+        <h2>Entries</h2>
+        <div id="records" class="records">
+          <div class="empty">Load JSONL files to begin.</div>
+        </div>
+      </section>
+    </div>
+
+    <script>
+      const state = {
+        records: [],
+        errors: [],
+      };
+
+      const fileInput = document.getElementById("fileInput");
+      const dropZone = document.getElementById("dropZone");
+      const recordsEl = document.getElementById("records");
+      const statsEl = document.getElementById("stats");
+
+      const searchInput = document.getElementById("searchInput");
+      const providerInput = document.getElementById("providerInput");
+      const modelInput = document.getElementById("modelInput");
+      const sessionInput = document.getElementById("sessionInput");
+      const agentInput = document.getElementById("agentInput");
+      const dateFrom = document.getElementById("dateFrom");
+      const dateTo = document.getElementById("dateTo");
+
+      const clearFilters = document.getElementById("clearFilters");
+      const clearData = document.getElementById("clearData");
+
+      function toDateInputValue(date) {
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, "0");
+        const d = String(date.getDate()).padStart(2, "0");
+        return `${y}-${m}-${d}`;
+      }
+
+      function parseJsonl(text, source) {
+        const lines = text.split(/\r?\n/);
+        const parsed = [];
+        lines.forEach((line, idx) => {
+          const trimmed = line.trim();
+          if (!trimmed) return;
+          try {
+            const obj = JSON.parse(trimmed);
+            const ts = obj && obj.ts ? new Date(obj.ts) : null;
+            parsed.push({
+              ...obj,
+              _source: source,
+              _line: idx + 1,
+              _ts: ts && !Number.isNaN(ts.valueOf()) ? ts : null,
+            });
+          } catch (err) {
+            state.errors.push({
+              source,
+              line: idx + 1,
+              message: String(err),
+            });
+          }
+        });
+        return parsed;
+      }
+
+      function formatTs(rec) {
+        const ts = rec._ts;
+        if (!ts) return "unknown time";
+        return new Intl.DateTimeFormat(undefined, {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        }).format(ts);
+      }
+
+      function matchesText(value, needle) {
+        if (!needle) return true;
+        if (!value) return false;
+        return String(value).toLowerCase().includes(needle);
+      }
+
+      function applyFilters() {
+        const q = searchInput.value.trim().toLowerCase();
+        const provider = providerInput.value.trim().toLowerCase();
+        const model = modelInput.value.trim().toLowerCase();
+        const sessionId = sessionInput.value.trim().toLowerCase();
+        const agentId = agentInput.value.trim().toLowerCase();
+        const fromDate = dateFrom.value ? new Date(dateFrom.value + "T00:00:00") : null;
+        const toDate = dateTo.value ? new Date(dateTo.value + "T23:59:59.999") : null;
+
+        const filtered = state.records.filter((rec) => {
+          const event = rec.event || {};
+          const ctx = rec.ctx || {};
+          if (fromDate && rec._ts && rec._ts < fromDate) return false;
+          if (toDate && rec._ts && rec._ts > toDate) return false;
+          if (provider && !matchesText(event.provider, provider)) return false;
+          if (model && !matchesText(event.model, model)) return false;
+          if (sessionId && !matchesText(event.sessionId, sessionId)) return false;
+          if (agentId && !matchesText(ctx.agentId, agentId)) return false;
+
+          if (!q) return true;
+          const hay = [
+            event.prompt,
+            event.systemPrompt,
+            event.provider,
+            event.model,
+            event.runId,
+            event.sessionId,
+            ctx.agentId,
+            ctx.sessionKey,
+            ctx.messageProvider,
+          ]
+            .filter(Boolean)
+            .join("\n")
+            .toLowerCase();
+          return hay.includes(q);
+        });
+
+        renderStats(filtered.length);
+        renderRecords(filtered);
+      }
+
+      function renderStats(filteredCount) {
+        const total = state.records.length;
+        const errors = state.errors.length;
+        statsEl.textContent = `records: ${filteredCount} / ${total} | parse errors: ${errors}`;
+      }
+
+      function renderRecords(records) {
+        recordsEl.innerHTML = "";
+        if (!records.length) {
+          const empty = document.createElement("div");
+          empty.className = "empty";
+          empty.textContent = "No entries match the current filters.";
+          recordsEl.appendChild(empty);
+          return;
+        }
+
+        const frag = document.createDocumentFragment();
+        records.forEach((rec) => {
+          const event = rec.event || {};
+          const ctx = rec.ctx || {};
+          const details = document.createElement("details");
+          details.className = "record";
+
+          const summary = document.createElement("summary");
+          const left = document.createElement("div");
+          left.textContent = formatTs(rec);
+          const middle = document.createElement("div");
+          middle.innerHTML = `
+            <span class="tag">${event.provider || "unknown"}</span>
+            <span class="tag">${event.model || "unknown"}</span>
+            <span class="tag">session: ${event.sessionId || "?"}</span>
+          `;
+          const right = document.createElement("div");
+          const promptLen = event.prompt ? event.prompt.length : 0;
+          right.textContent = `${promptLen} chars`;
+          summary.append(left, middle, right);
+          details.appendChild(summary);
+
+          const meta = document.createElement("div");
+          meta.className = "meta-grid";
+          meta.innerHTML = `
+            <div>runId: ${event.runId || "n/a"}</div>
+            <div>sessionId: ${event.sessionId || "n/a"}</div>
+            <div>agentId: ${ctx.agentId || "n/a"}</div>
+            <div>images: ${event.imagesCount ?? 0}</div>
+            <div>history messages: ${
+              Array.isArray(event.historyMessages) ? event.historyMessages.length : 0
+            }</div>
+            <div>source: ${rec._source || "n/a"}#${rec._line || "?"}</div>
+          `;
+          details.appendChild(meta);
+
+          if (event.systemPrompt) {
+            const title = document.createElement("div");
+            title.className = "section-title";
+            title.textContent = "System Prompt";
+            const pre = document.createElement("pre");
+            pre.textContent = event.systemPrompt;
+            details.append(title, pre);
+          }
+
+          const promptTitle = document.createElement("div");
+          promptTitle.className = "section-title";
+          promptTitle.textContent = "Prompt";
+          const promptPre = document.createElement("pre");
+          promptPre.textContent = event.prompt || "";
+          details.append(promptTitle, promptPre);
+
+          const historyTitle = document.createElement("div");
+          historyTitle.className = "section-title";
+          historyTitle.textContent = "History Messages";
+          const historyPre = document.createElement("pre");
+          historyPre.textContent = JSON.stringify(event.historyMessages || [], null, 2);
+          details.append(historyTitle, historyPre);
+
+          frag.appendChild(details);
+        });
+        recordsEl.appendChild(frag);
+      }
+
+      async function handleFiles(fileList) {
+        const files = Array.from(fileList || []);
+        if (!files.length) return;
+        for (const file of files) {
+          const text = await file.text();
+          const parsed = parseJsonl(text, file.name);
+          state.records.push(...parsed);
+        }
+        state.records.sort((a, b) => {
+          const ta = a._ts ? a._ts.valueOf() : 0;
+          const tb = b._ts ? b._ts.valueOf() : 0;
+          return ta - tb;
+        });
+        applyFilters();
+      }
+
+      fileInput.addEventListener("change", (e) => handleFiles(e.target.files));
+
+      ["dragenter", "dragover"].forEach((evt) => {
+        dropZone.addEventListener(evt, (e) => {
+          e.preventDefault();
+          dropZone.classList.add("drag");
+        });
+      });
+      ["dragleave", "drop"].forEach((evt) => {
+        dropZone.addEventListener(evt, (e) => {
+          e.preventDefault();
+          dropZone.classList.remove("drag");
+        });
+      });
+      dropZone.addEventListener("drop", (e) => {
+        handleFiles(e.dataTransfer.files);
+      });
+
+      [
+        searchInput,
+        providerInput,
+        modelInput,
+        sessionInput,
+        agentInput,
+        dateFrom,
+        dateTo,
+      ].forEach((el) => {
+        el.addEventListener("input", applyFilters);
+        el.addEventListener("change", applyFilters);
+      });
+
+      clearFilters.addEventListener("click", () => {
+        searchInput.value = "";
+        providerInput.value = "";
+        modelInput.value = "";
+        sessionInput.value = "";
+        agentInput.value = "";
+        dateFrom.value = "";
+        dateTo.value = "";
+        applyFilters();
+      });
+
+      clearData.addEventListener("click", () => {
+        state.records = [];
+        state.errors = [];
+        fileInput.value = "";
+        applyFilters();
+      });
+
+      renderStats(0);
+    </script>
+  </body>
+</html>
